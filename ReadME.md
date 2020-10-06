@@ -1,0 +1,1 @@
+# This is a SQL query collection for my Database Course 
