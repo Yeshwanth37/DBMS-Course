@@ -18,8 +18,8 @@ This Repository is a collection of SQL Query Challanges, Normalization, and Proj
 
 ## Execution Environment 
  
-    - The code challanges were done in a sandbox environment using [SQLexeSys](http://192.245.222.252/SQLexeSys/Index.aspx)
+ - The code challanges were done in a sandbox environment using [SQLexeSys](http://192.245.222.252/SQLexeSys/Index.aspx)
 
 ## Authors 
 
-    - [**Yeshwanth Nellikanti**](https://github.com/Yeshwanth37)
+ - [**Yeshwanth Nellikanti**](https://github.com/Yeshwanth37)
