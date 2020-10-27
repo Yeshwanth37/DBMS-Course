@@ -155,3 +155,47 @@ SELECT COUNT(*) TotalCnt, COUNT(DISTINCT TripStart) TripStart, COUNT(DISTINCT Tr
 FROM Trips1;
 
 --This query is to built to find out how many single attribute candidate keys exists i.e. if any same coloumn exists. 
+/*
+TripStart and TripEnd are unique but given the assumptions above, they cannot be candidate keys 
+and therefore there are no single attribute candidate keys. They are unique in the given set of
+data, but are not universally so.
+*/
+SELECT COUNT(*) TripStart,TripEnd
+FROM Trips1
+GROUP BY TripStart,TripEnd
+HAVING COUNT(*) > 1;
+/*
+2c. Write a query that confirms (TripStart,ShipVIN) is a candidate key. 
+    Write a query that disconfirms a pair of attributes as a candidate key (just pick a pair).
+
+Provide a brief explanation.
+*/
+SELECT COUNT(*)AS TotalCnt, TripStart,ShipVIN
+FROM Trips1
+GROUP BY TripStart,ShipVIN
+HAVING COUNT(*) > 1;
+-- It is confirmed that these are candidate keys for the given data and since it has unique values when grouping by both.
+
+SELECT COUNT(*)AS TripHour, CaptainName
+FROM Trips1
+GROUP BY TripHour, CaptainName
+HAVING COUNT(*) > 1;
+-- It confirms that these two attributes are not candidate keys as it has same values when grouping by.
+
+/*
+2d. Add surrogate key to the Trip table (I called mine TripID)
+    Make TripID an IDENTITY field that starts at 1 and is the PRIMARY KEY.
+*/
+ALTER Table Trips1
+ADD TripID INT IDENTITY(1,1) PRIMARY KEY;
+
+/*
+2.e INSERT anamoly and UNIQUE constraint.
+Write an INSERT statement that adds a trip with a duplicate TripStart and ShipVIN. Because, by default,
+all attributes allow NULLs, only insert TripStart and ShipVIN in the INSERT statement (as a test).
+
+Run a query to confirm a duplicate Trip can be inserted.
+
+TripStart               TripEnd                 TripHour TripEngineStart  (and so on...)
+2010-06-26 08:30:00.000 2010-06-26 15:30:00.000 7        0
+2010-06-26 08:30:00.000 NULL                    NULL     NULL
