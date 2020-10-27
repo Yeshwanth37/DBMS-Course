@@ -199,3 +199,45 @@ Run a query to confirm a duplicate Trip can be inserted.
 TripStart               TripEnd                 TripHour TripEngineStart  (and so on...)
 2010-06-26 08:30:00.000 2010-06-26 15:30:00.000 7        0
 2010-06-26 08:30:00.000 NULL                    NULL     NULL
+*/
+INSERT INTO Trips1(TripStart, ShipVIN)
+	SELECT Tripstart, ShipVIN
+	FROM Trips1
+	WHERE TripID = 17;
+
+--Write a query that returns the two duplicate rows using the surrogate key. The last primary key value should be TripID=171.
+SELECT Tripstart, ShipVIN
+FROM Trips1
+WHERE TripID IN (17,171);
+
+--Delete the newly created row using the surrogate primary key.
+DELETE Trips1
+WHERE TripID = 171;
+
+/*
+2.f ALTER TABLE slTrip to set both attributes of the composite key to be NOT NULL.
+*/
+ALTER TABLE Trips1
+ALTER COLUMN TripStart DATETIME Not Null;
+
+ALTER TABLE Trips1
+ALTER COLUMN ShipVIN nVARChar(255) NOT NULL;
+
+/*
+2.g Add a UNIQUE constraint on the candidate key (TripStart,ShipVIN).
+    Give the constraint a meaninful name. I called mine: Unique_TripStartShipVIN
+*/
+ALTER TABLE Trips1
+ADD CONSTRAINT TripStart_ShipVIN
+	UNIQUE(TripStart,ShipVIN)
+
+/*
+Rerun the INSERT statement to test the constraint.
+
+Msg 2627, Level 14, State 1, Line 1
+Violation of UNIQUE KEY constraint 'Unique_TripStartShipVIN'.
+*/
+INSERT into Trips1(TripStart,ShipVIN)
+  SELECT TripStart,ShipVIN
+  FROM Trips1
+  WHERE TripID =17;
