@@ -125,3 +125,33 @@ SELECT * FROM Trips1;
 
 -- In the above query we are creating a new table so that we can eliminate duplicate rows by removing COUNT function and HAVING function. In this way the duplicate gets deleted. 
 -- By adding into function GROUP BY the duplicate gets one.
+/*********************************************************************
+2. Identify minimal candidate key - Establish keys
+*********************************************************************/
+
+/*
+ASSUMPTION: Assume there could be multiple ships in the ShipsLog data.
+            Assume that two different ships can start at the same time. In our database we only have one ship but
+            if there were two or more ships, two or more trips could start and end at the same TripStart. 
+	        You may assume that a ship cannot set sail on two different trips at the same time.
+	        So... the minimal candidate key is (TripStart, ShipVIN).
+*/
+
+/*
+2a. Write a query to determine if a single attribute candidate key exists in your table.  Provide an alias for each column. 
+    Include the total number of rows in the table as the first attribute in the SELECT statement of the query (uncorrelated). 
+	TotalCnt, TripStart, and TripEnd should be 170. The others are something less than 170. MfgYear = 1.
+
+	Provide a brief explanation of your query and the results.
+
+TotalCnt TripStart TripEnd TripHour TripEngineStart (and so on...)
+170      170        170    19       165
+
+*/
+SELECT COUNT(*) TotalCnt, COUNT(DISTINCT TripStart) TripStart, COUNT(DISTINCT TripEnd) TripEnd, COUNT(DISTINCT TripHour) TripHour, COUNT(DISTINCT TripEngineStart) TripEngineStart,
+	   COUNT(DISTINCT TripEngineEnd) TripEngineEnd, COUNT(DISTINCT WaterTemp) WaterTemp, COUNT(DISTINCT MfgYear) MfgYear, COUNT(DISTINCT Make) Make, COUNT(DISTINCT Model) Model, 
+	   COUNT(DISTINCT ShipVIN) ShipVIN, COUNT(DISTINCT CaptainName) CaptainName, COUNT(DISTINCT Pax1) Pax1, COUNT(DISTINCT Pax2) Pax2, COUNT(DISTINCT Pax3) Pax3, 
+	   COUNT(DISTINCT Pax4) Pax4, COUNT(DISTINCT Pax5) Pax5,COUNT(DISTINCT Pax6) Pax6,COUNT(DISTINCT Pax7) Pax7, COUNT(DISTINCT Launch) Launch
+FROM Trips1;
+
+--This query is to built to find out how many single attribute candidate keys exists i.e. if any same coloumn exists. 
