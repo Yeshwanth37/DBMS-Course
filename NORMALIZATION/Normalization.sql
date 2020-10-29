@@ -241,3 +241,83 @@ INSERT into Trips1(TripStart,ShipVIN)
   SELECT TripStart,ShipVIN
   FROM Trips1
   WHERE TripID =17;
+
+  /*********************************************************************
+3. Functional dependencies
+*********************************************************************/
+
+/*
+Because you already are familar with the normalized version of this
+database, these queries are confirmatory in nature.
+Confirmation of a design implementation is an important step prior
+to deployment and production. In large datasets, visual inspection is 
+impossible.
+In an exploratory project, you would identify and test combinations
+based on your knowledge of the content and attribute names.
+*/
+
+--3a. Identify functional dependencies
+/*
+
+Confirm these functional dependencies: 
+[TripID] --> CaptainName
+[TripID] --> ShipVIN
+[TripID] --> Launch
+[TripID] --> ShipVIN --> MfgYear
+[TripID] --> ShipVIN --> Make
+[TripID] --> ShipVIN --> Model
+
+Disconfirm this functional dependency
+Launch --> WaterTemp
+
+On the exam, be prepared to draw tokenized diagrams if given 
+a set of functional dependencies and/or SQL statements.
+
+Provide a brief explanation for each query that includes the type of Normal Form violated.
+
+*/
+--Write the query to confirm
+--[TripID] --> CaptainName
+
+SELECT TripID,
+	   COUNT(DISTINCT CaptainName) AS CaptCNT
+FROM Trips1
+GROUP BY TripID
+HAVING COUNT(DISTINCT CaptainName) > 1;
+
+
+--Write the query to confirm
+--[TripID] --> ShipVIN
+
+SELECT TripID,
+	   COUNT(DISTINCT ShipVIN) AS ShipCNT
+FROM Trips1
+GROUP BY TripID
+HAVING COUNT(DISTINCT ShipVIN) > 1;
+
+
+--Write the query to confirm
+--[TripID] --> Launch
+
+SELECT TripID,
+	   COUNT(DISTINCT Launch) AS LaunchCNT
+FROM Trips1
+GROUP BY TripID
+HAVING COUNT(DISTINCT Launch) > 1;
+
+
+--Write the query to confirm
+--[TripID] --> ShipVIN --> MfgYear
+
+SELECT TripID,
+	   COUNT(DISTINCT MfgYear) AS MfgCNT
+FROM Trips1
+GROUP BY TripID
+HAVING COUNT(DISTINCT MfgYear) > 1;
+
+SELECT ShipVIN,
+	   COUNT(DISTINCT MfgYear) AS MfgCNT
+FROM Trips1
+GROUP BY ShipVIN
+HAVING COUNT(DISTINCT MfgYear) > 1;
+-- in this case shipvin is FD on Mfgyear and it voilates the 2NF
