@@ -321,3 +321,48 @@ FROM Trips1
 GROUP BY ShipVIN
 HAVING COUNT(DISTINCT MfgYear) > 1;
 -- in this case shipvin is FD on Mfgyear and it voilates the 2NF
+--Write the query to confirm
+--[TripID] --> ShipVIN --> Make
+
+SELECT TripID,
+	   COUNT(DISTINCT ShipVIN) AS ShipCNT
+FROM Trips1
+GROUP BY TripID
+HAVING COUNT(DISTINCT ShipVIN) > 1;
+
+SELECT ShipVIN,
+	   COUNT(DISTINCT Make) AS MakeCNT
+FROM Trips1
+GROUP BY ShipVIN
+HAVING COUNT(DISTINCT Make) > 1;
+--even here shipvin is candiadate key and 2NF violates
+
+--Write the query to confirm
+--[TripID] --> ShipVIN --> Model
+
+SELECT TripID,
+	   COUNT(DISTINCT ShipVIN) AS ShipCNT
+FROM Trips1
+GROUP BY TripID
+HAVING COUNT(DISTINCT ShipVIN) > 1;
+
+SELECT ShipVIN,
+	   COUNT(DISTINCT Model) AS ModelCNT
+FROM Trips1
+GROUP BY ShipVIN
+HAVING COUNT(DISTINCT Model) > 1;
+--shipVIN is candidate key and this FD on Model ,so it violates 2NF
+
+
+--Write the query to disconfirm
+--Launch --> WaterTemp
+SELECT Launch,
+	   COUNT(DISTINCT WaterTemp) AS ShipCNT
+FROM Trips1
+GROUP BY Launch
+HAVING COUNT(DISTINCT WaterTemp) > 1;
+--it disconfirms FD, because launch is not determining same in all the watertemp, so it is not FD.
+
+--Explain why this disconfirms the functional dependency
+
+--Because it has more than one value and both are not dependent!
