@@ -401,3 +401,46 @@ SELECT TripStart,ShipVIN
 FROM Trips1
 WHERE TripID = 15;
 -- This query is not working because we have specified about unique constraint value above #2.g So we should drop these constraint values
+ALTER TABLE Trips1
+DROP CONSTRAINT Tripstart_ShipVIN
+
+-- Now exceute the above INSERT query by inserting only to Candidate Key.
+
+INSERT INTO Trips1(TripStart,ShipVIN)
+SELECT TripStart,ShipVIN
+FROM Trips1
+WHERE TripID = 15;
+
+SELECT * from Trips1
+-- We have inserted a new row and data only for the candidate keys which are tripstart and ShipVINand also we have mentioned a tripid value in the where clause ,then it gets added otherwise it wont get added or inserted .
+
+/*
+4d. Write an UPDATE statement that demonstrates an update anomaly for Trip table.
+    The UPDATE statement should update a row based on a TripID value.
+    Provide a brief explanation.
+*/
+UPDATE Trips1
+SET CaptainName = 'Madd'
+WHERE TripID =2;
+
+--Verify through below query
+
+SELECT * FROM Trips1;
+
+-- If we do a change in capitanName at TripID 2 from Harold Pardue to Madd and to make like this changes in more than one place, the database will be inconsistent.
+-- Let's set back into the old one
+
+UPDATE Trips1
+SET CaptainName = 'Harold Pardue'
+WHERE TripID=2;
+
+/*
+Explanation
+If the passenger assignment for Pax2 in Trip where TripID =3 is changed to Jessica Brown, there are three possible
+interpretations:
+1. Jessica Futural changed her name and there for all occurrences should be changed
+2. Jessica Brown is a new passenger being added to the database
+3. This was an error and the transaction should not be allowed
+*/
+
+--Set it back to previous value.
