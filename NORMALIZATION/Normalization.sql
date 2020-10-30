@@ -366,3 +366,38 @@ HAVING COUNT(DISTINCT WaterTemp) > 1;
 --Explain why this disconfirms the functional dependency
 
 --Because it has more than one value and both are not dependent!
+/*********************************************************************
+4. Data Redundancy and modification anomalies
+*********************************************************************/
+
+/*
+4a. Provide and comment on an example of data redundancy in the Trip table.
+*/
+SELECT TripID,TripStart, TripEnd, TripHour, TripEngineStart, TripEngineEnd, WaterTemp,MfgYear, Make,Model, ShipVIN,CaptainName, Pax1, Pax2, Pax3, Pax4, Pax5, Pax6, Pax7, Launch
+FROM Trips1;
+
+-- Observe the MfgYear in the table where all the values are same
+
+/*
+4b. Write a DELETE statement that demonstrates a delete anomaly for the Trip table.
+    The DELETE statement should delete a row based on a TripID value (Primary key).
+    Provide a brief explanation.
+*/
+DELETE FROM Trips1
+WHERE TripID = 4;
+-- Through this query row 4 will be deleted and recheck with below query.
+
+SELECT * FROM Trips1
+WHERE TripID = 4;
+-- There is no row with TripID 4 i.e the 4th row.
+
+/*
+4c. Write an INSERT statement that demonstrates an insert anomaly for the Trip table. 
+    The INSERT statement should insert values for only part of the candidate key.
+    Provide a brief explanation.
+*/
+INSERT INTO Trips1(TripStart,ShipVIN)
+SELECT TripStart,ShipVIN
+FROM Trips1
+WHERE TripID = 15;
+-- This query is not working because we have specified about unique constraint value above #2.g So we should drop these constraint values
