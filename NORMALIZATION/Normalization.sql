@@ -504,3 +504,41 @@ Fowl River
 SELECT DISTINCT Launch
 FROM Trips1
 WHERE Launch IS NOT NULL;
+
+--Create a new table for Launch. Make LaunchID an IDENTITY. Start the sequence at 100.
+--All attributes should be NOT NULL (except the primary key).
+
+/*
+Before we insert data... need to clean up some "dirty data." 
+'Causeway', 'CauseWay', and 'Causeway TJ' and 'Lescher' and 'Lescher (Navco)' are actually
+the same launches. Over time I typed them into my spreadsheet with slightly different names. 
+They should be just 'Causeway' and 'Navco'.
+Write the UPDATE statements against the Trip table to correct the data.
+
+Revised data:
+
+Launch
+Causeway
+Fort Gaines
+Fowl River
+Harbor Rd. Landing Ocean Springs MS
+Navco
+  :
+  :
+
+*/
+--UPDATE the Trip table: set 'Causeway TJ' to 'CauseWay" and 'Lescher (Navco)' to 'Navco'.
+
+UPDATE Trips1
+SET Launch ='Causeway'
+WHERE Launch = 'Causeway TJ';
+
+UPDATE Trips1
+SET Launch = 'Navco'
+WHERE Launch ='Lescher (Navco)';
+
+UPDATE Trips1
+SET Launch = 'Navco'
+WHERE Launch ='Lescher';
+
+SELECT * FROM Trips1;
