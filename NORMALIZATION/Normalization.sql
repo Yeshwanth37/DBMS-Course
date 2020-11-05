@@ -444,3 +444,63 @@ interpretations:
 */
 
 --Set it back to previous value.
+/*********************************************************************
+5. Normalizing the tables
+*********************************************************************/
+
+/*
+Process for putting a relation into BCNF Figure
+
+1. Identify every functional dependency
+2. Identify every candidate key
+3. If there is a functional dependency that has a 
+   determinant that is not a candidate key:
+   A. Move the columns of that functional dependency to a new relation
+   B. Make the determinant of that functional dependency the
+      primary key of the new relation
+   C. Leave a copy of the determinant as a foreign key in the 
+      original relation
+   D. Create a referential integrity constraint between the 
+      original relation and the new relation
+4. Repeat step 3 until every determinant of every relation is a 
+   candidate key
+We have already done steps 1 and 2 (confirmation).
+
+DROP the constraint on the candidate key (2f.)
+
+Repeat step 3 until every determinant of every relation is a candidate key.
+Identify each step in a comment: 
+--Step 3.A. Determinant --> Dependent
+
+Create IDENTITY surrogate keys for all newly created normalized tables.
+
+*/
+USE ShipLogPax
+
+SELECT * FROM Trips1;
+
+--[TripID] --> CaptainName
+/*
+In this case we will not make a separate table for Captain. In our ERD we did draw an entity
+for the Captain, but we decided to implement all persons as one table slPax with two
+relationships, one for Captain and one for passenger.
+We will return to this dependancy when we deal with passengers.
+*/
+
+/*
+[TripID] --> Launch
+Retrieve [project] distinct rows for attributes involved in partial dependency with Launch
+There should be 12 DISTINCT launch names.
+
+Launch
+Causeway
+Causeway TJ
+Fort Gaines
+Fowl River
+  :
+  :
+
+*/
+SELECT DISTINCT Launch
+FROM Trips1
+WHERE Launch IS NOT NULL;
