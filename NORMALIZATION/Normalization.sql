@@ -542,3 +542,43 @@ SET Launch = 'Navco'
 WHERE Launch ='Lescher';
 
 SELECT * FROM Trips1;
+
+/*
+Insert DISTINCT values for Launch into new table. Write a SELECT * to confirm INSERT.
+There should only be 10 Launches.
+
+LaunchID Launch
+100      Causeway
+101      Fort Gaines
+102      Fowl River
+103      Harbor Rd. Landing Ocean Springs MS
+104      Navco
+  :
+  :
+*/
+
+SELECT DISTINCT Launch
+INTO LaunchTables
+FROM Trips1
+WHERE Launch IS NOT NULL;
+
+ALTER TABLE LaunchTables
+ADD LaunchID INT IDENTITY(100,1) PRIMARY KEY;
+
+SELECT LaunchID, Launch
+FROM LaunchTables;
+
+--Create a Foreign key for the Launch table in the Trip table. Specify that the FK can be NULL.
+
+ALTER TABLE Trips1
+ADD LaunchID INT NULL;
+
+--Link the two tables through PK/FK using an UPDATE statement.
+
+UPDATE Trips1
+SET Trips1.LaunchID = LaunchTables.LaunchID
+FROM Trips1, LaunchTables
+WHERE LaunchTables.Launch = Trips1.Launch;
+
+SELECT * 
+FROM Trips1
