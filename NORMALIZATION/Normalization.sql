@@ -582,3 +582,42 @@ WHERE LaunchTables.Launch = Trips1.Launch;
 
 SELECT * 
 FROM Trips1
+/*
+Confirm update by JOINing Trip and Launch on the new PK/FK relationship. The result should be 170 rows.
+
+TripStart                   LaunchID Launch   LaunchID	Launch
+2010-07-03 09:30:00.000	    100      Causeway 100       Causeway
+2010-07-05 13:00:00.000	    100      Causeway 100       Causeway
+2010-07-10 09:00:00.000	    100      Causeway 100       Causeway
+  :
+  :
+*/
+
+--Create a referential integrity constraint (define the Foreign Key as a constraint).
+--ALTER TABLE slTrip DROP CONSTRAINT fk_launchID;
+
+ALTER TABLE Trips1
+ADD CONSTRAINT fk_LaunchTables
+FOREIGN key (LaunchID)
+REFERENCES LaunchTables(LaunchID);
+
+/*
+Test by attempting to delete a launch from the launch table. The fk constraint should prohibit this
+because it would result in an orphan in the many (child) table.
+
+Msg 547, Level 16, State 0, Line 1
+The DELETE statement conflicted with the REFERENCE constraint
+*/
+DELETE FROM LaunchTables
+WHERE Launch = 'Causeway';
+
+--Drop the launch column from the trip table (clean up...)
+
+ALTER TABLE Trips1
+DROP COLUMN Launch;
+
+--Write a SELECT * JOINing the two tables to confirm all operations.
+--Launch should no longer appear in the Trip table.
+
+SELECT *
+FROM Trips1 INNER JOIN Launchtables ON Trips1.LaunchID = LaunchTables.LaunchID;
