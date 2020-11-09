@@ -621,3 +621,38 @@ DROP COLUMN Launch;
 
 SELECT *
 FROM Trips1 INNER JOIN Launchtables ON Trips1.LaunchID = LaunchTables.LaunchID;
+
+--I have done this but this does not connect to pk and fk as in the video
+
+--Now work on the Ship attributes.
+
+--[TripID] --> ShipVIN
+--[TripID] --> ShipVIN --> MfgYear
+--[TripID] --> ShipVIN --> Make
+--[TripID] --> ShipVIN --> Model
+
+--All attributes associated with ShipVIN are to be moved to a new One table having a one to many relationship with the Trip table.
+
+/*
+Retrieve [project] distinct rows for the four attributes involved in dependency with Ship
+There should be 1 DISTINCT row, of course, because there is currently only one ship
+
+ShipVIN     MfgYear Make        Model
+VRKS112333	2000	Chaparral	180 LE
+*/
+
+SELECT DISTINCT ShipVIN, MfgYear, Make, Model
+FROM Trips1;
+
+--Create a new table for Ship. Make ShipID an IDENTITY. Start the sequence at 200.
+--All attributes should be NOT NULL (except the primary key).
+
+SELECT DISTINCT ShipVIN, MfgYear, Make, Model
+INTO shipTable
+FROM Trips1
+WHERE MfgYear IS NOT NULL AND 
+	  Make IS NOT NULL AND 
+	  Model IS NOT NULL;
+
+ALTER TABLE shiptable
+ADD ShipID INT IDENTITY (200,1) PRIMARY KEY;
