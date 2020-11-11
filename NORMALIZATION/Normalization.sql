@@ -724,3 +724,71 @@ REFERENCES ShipTable(shipID);
 SELECT * 
 FROM Trips1,shipTable
 WHERE Trips1.ShipID = shipTable.ShipID;
+
+/*
+Pax1, Pax2, Pax3... in the Trip table is a repeating group and therefore violates 1NF.
+Before we pivot these names and extract CaptainName, we should create a unique list of passengers
+and create the Pax table.
+
+Retrieve [project] distinct passengers names
+The easiest way to handle this sort of situation is with a UNION of the form:
+
+SELECT Name
+FROM (SELECT DISTINCT Pax1 AS Name
+      FROM Trip
+      WHERE Pax1 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax2 AS Name
+      FROM Trip
+      WHERE Pax2 IS NOT NULL
+      UNION
+       :
+       :
+	   ) AS vwName
+ORDER BY Name ASC
+
+Might as well put a SELECT rapper around it from the outset
+because we have to extract last and first name separately 
+and that is easier to do once the DISTINCT master list has been compiled.
+
+The inner query should return 133 rows.
+
+Name
+(MK) Mary Katherine Ladnier
+Abbe Adent
+Alec Yasinsac
+Aline Pardue
+  :
+  :
+
+*/
+
+SELECT PaxName
+FROM (SELECT DISTINCT Pax1 AS PaxName
+      FROM Trips1
+      WHERE Pax1 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax2 AS PaxName
+      FROM Trips1
+      WHERE Pax2 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax3 AS PaxName
+      FROM Trips1
+      WHERE Pax3 IS NOT NULL
+	  UNION 
+	  SELECT DISTINCT Pax4 AS PaxName
+      FROM Trips1
+      WHERE Pax4 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax5 AS PaxName
+      FROM Trips1
+      WHERE Pax5 IS NOT NULL
+	  UNION
+      SELECT DISTINCT Pax6 AS PaxName
+      FROM Trips1
+      WHERE Pax6 IS NOT NULL
+	  UNION
+	  SELECT DISTINCT Pax7 AS PaxName
+      FROM Trips1
+      WHERE Pax7 IS NOT NULL) AS vwName
+ORDER BY PaxName ASC;
