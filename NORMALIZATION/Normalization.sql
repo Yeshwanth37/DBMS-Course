@@ -656,3 +656,71 @@ WHERE MfgYear IS NOT NULL AND
 
 ALTER TABLE shiptable
 ADD ShipID INT IDENTITY (200,1) PRIMARY KEY;
+
+/*
+Insert DISTINCT values for Ship into new table. Write a SELECT * to confirm INSERT.
+There should only be 1 Ship.
+
+ShipID  ShipVIN    MfgYear Make      Model
+200     VRKS112333 2000    Chaparral 180 LE
+*/
+
+SELECT *
+FROM shipTable;
+
+--Create a Foreign key for the Ship table in the Trip table. Specify that the FK can be NULL.
+
+ALTER TABLE Trips1
+ADD ShipID INT NULL;
+
+--Link the two tables through PK/FK (ShipVIN) using an UPDATE statement.
+
+UPDATE Trips1
+SET Trips1.ShipID = shiptable.ShipID
+FROM Trips1, shipTable
+WHERE Trips1.ShipVIN =shiptable.ShipVIN;
+
+--Confirm update by JOINing Trip and Launch on the new PK/FK relationship. The result should be 170 rows.
+
+Select * from Trips1;
+
+SELECT COUNT(*) AS TotalRows
+FROM Trips1 INNER JOIN ShipTable 
+					ON Trips1.ShipID=Shiptable.ShipID;
+
+
+--Create a referential integrity constraint (define the Foreign Key as a constraint).
+--ALTER TABLE slTrip DROP CONSTRAINT fk_ShipID;
+
+ALTER TABLE Trips1
+ADD CONSTRAINT fk_ShipTable
+FOREIGN key (ShipID)
+REFERENCES ShipTable(ShipID);
+
+--Test by attempting to delete a Ship from the Ship table. The fk constraint should prohibit this
+--because it would result in an orphan in the many (child) table.
+
+DELETE FROM Shiptable
+WHERE ShipID=200;
+
+--Drop the Ship columns from the trip table (clean up...)
+--Before we do, we need to DROP our candidate key constraint and recreate it.
+
+ALTER TABLE Trips1
+DROP CONSTRAINT fk_ShipTable;
+
+ALTER TABLE Trips1
+DROP COLUMN ShipVIN, MfgYear, Make, Model;
+
+--Re-create the foreign key constraint this time with the foreign key for ShipID.
+
+ALTER TABLE Trips1
+ADD CONSTRAINT fk_ShipTable
+FOREIGN key (ShipID)
+REFERENCES ShipTable(shipID);
+
+--Write a SELECT * JOINing the two tables to confirm all operations.
+
+SELECT * 
+FROM Trips1,shipTable
+WHERE Trips1.ShipID = shipTable.ShipID;
