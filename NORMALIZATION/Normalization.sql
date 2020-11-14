@@ -792,3 +792,70 @@ FROM (SELECT DISTINCT Pax1 AS PaxName
       FROM Trips1
       WHERE Pax7 IS NOT NULL) AS vwName
 ORDER BY PaxName ASC;
+
+*
+Ok. Here is the tricky part, extracting first and last name. String functions in SQL are a little weak.
+Probably we should write a script to do this pre-processing.
+We are going to make the simplifying assumption that the last set of contiguous characters is
+the LastName. This certainly not true. But for example in:
+
+Krishna Priya Tummala
+
+we will assume 'Tummala' is the last name and we assume 'Krishna Priya' is the First Name.
+
+This is always a major issue when importing data from semi-structured and un-structured sources.
+
+For LastName we need to retrieve all the text from the RIGHT till the last space.
+For FirstName we need to retrieve all the text from the LEFT until the last space.
+
+I'm going to give you "a" solution, but you should spend some time understanding what this actually does
+and how it works. There are other solutions. I encourage you to look around.
+
+Documentation on SQL Server string functions can be found here: https://msdn.microsoft.com/en-us/library/ms181984.aspx
+
+SELECT Name, LEFT(Name, (LEN(Name) - CHARINDEX(' ',REVERSE(Name)))) AS PaxFirstName,
+       RIGHT(Name, (CHARINDEX(' ',REVERSE(Name)))) AS PaxLastName 
+    :
+	:
+	
+These functions extract first and last name as in below.
+
+Name                            PaxFirstName         PaxLastName
+(MK) Mary Katherine Ladnier	    (MK) Mary Katherine  Ladnier'
+Abbe Adent                      Abbe                 Adent
+Alec Yasinsac                   Alec                 Yasinsac
+   :
+   :
+
+*/
+
+SELECT PaxName, LEFT(PaxName, (LEN(PaxName) - CHARINDEX(' ',REVERSE(PaxName)))) AS PaxFirstName,
+       RIGHT(PaxName, (CHARINDEX(' ',REVERSE(PaxName)))) AS PaxLastName 
+FROM (SELECT DISTINCT Pax1 AS PaxName
+      FROM Trips1
+      WHERE Pax1 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax2 AS PaxName
+      FROM Trips1
+      WHERE Pax2 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax3 AS PaxName
+      FROM Trips1
+      WHERE Pax3 IS NOT NULL
+	  UNION 
+	  SELECT DISTINCT Pax4 AS PaxName
+      FROM Trips1
+      WHERE Pax4 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax5 AS PaxName
+      FROM Trips1
+	  WHERE Pax5 IS NOT NULL
+	  UNION
+      SELECT DISTINCT Pax6 AS PaxName
+      FROM Trips1
+      WHERE Pax6 IS NOT NULL
+	  UNION
+	  SELECT DISTINCT Pax7 AS PaxName
+      FROM Trips1
+      WHERE Pax7 IS NOT NULL) AS vwName
+ORDER BY PaxName ASC;
