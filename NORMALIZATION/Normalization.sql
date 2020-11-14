@@ -859,3 +859,63 @@ FROM (SELECT DISTINCT Pax1 AS PaxName
       FROM Trips1
       WHERE Pax7 IS NOT NULL) AS vwName
 ORDER BY PaxName ASC;
+
+
+/*
+Create a new table for Pax. Make PaxID an IDENTITY. Start the sequence at 500.
+All attributes should be NULL (except the primary key).
+Include the "Name" column in the new table so we can link the PK/FK data.
+We will drop the Name column afterwards.
+*/
+SELECT DISTINCT PaxName, LEFT(PaxName, (LEN(PaxName) - CHARINDEX(' ',REVERSE(PaxName)))) AS PaxFirstName,
+       RIGHT(PaxName, (CHARINDEX(' ',REVERSE(PaxName)))) AS PaxLastName 
+INTO tblPax
+FROM (SELECT DISTINCT Pax1 AS PaxName
+      FROM Trips1
+      WHERE Pax1 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax2 AS PaxName
+      FROM Trips1
+      WHERE Pax2 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax3 AS PaxName
+      FROM Trips1
+      WHERE Pax3 IS NOT NULL
+	  UNION 
+	  SELECT DISTINCT Pax4 AS PaxName
+      FROM Trips1
+	   WHERE Pax4 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax5 AS PaxName
+      FROM Trips1
+      WHERE Pax5 IS NOT NULL
+      UNION
+      SELECT DISTINCT Pax6 AS PaxName
+      FROM Trips1
+      WHERE Pax6 IS NOT NULL
+	  UNION
+	  SELECT DISTINCT Pax7 AS PaxName
+      FROM Trips1
+      WHERE Pax7 IS NOT NULL) AS vwName
+ORDER BY PaxName ASC;
+
+ALTER TABLE tblPax
+ADD PaxID INT IDENTITY (500,1) PRIMARY KEY;
+
+/*
+Insert the data from the UNION query above into the new table.
+Write a SELECT * to confirm INSERT.
+
+Insert 133 rows.
+
+PaxID Name                        PaxFirstName         PaxLastName
+500   (MK) Mary Katherine Ladnier (MK) Mary Katherine  Ladnier'
+501   Abbe Adent                  Abbe                 Adent
+502   Alec Yasinsac               Alec                 Yasinsac
+   :
+   :
+
+*/
+
+SELECT PaxID, PaxName, PaxFirstName,PaxLastName
+FROM tblPax;
