@@ -971,3 +971,113 @@ WHERE PaxID = 513;
 
 ALTER TABLE Trips1
 DROP CONSTRAINT fk_tblPax;
+
+/*
+Ok, now to create the intersection table for Census and remove the repeating attribute
+in the Trip table.
+
+As before, we will use a UNION to pivot the column-wise data to row-wise.
+We need to create the column PaxOrder.
+
+The basic structure of the query is this:
+
+SELECT DISTINCT TripID, Pax1 AS Name, 1 AS PaxOrder
+FROM Trip
+WHERE Pax1 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax2 AS Name, 2 AS PaxOrder
+FROM Trip
+WHERE Pax2 IS NOT NULL
+UNION
+  :
+  :
+ORDER BY TripID ASC, PaxOrder ASC;
+
+Write the query as shown above. It should return 424 rows.
+
+TripID Name           PaxOrder
+1      Austin Pardue  1
+1      Giles Pardue   2
+2      Austin Pardue  1
+2      Giles Pardue   2
+3      Aline Pardue   1
+      :
+	  :
+
+We need to include WHERE Pax IS NOT NULL because the Trip table is a 
+sparsely filled matrix (the number of passengers can range from 0-7).
+
+*/
+SELECT DISTINCT TripID, Pax1 AS PaxName, 1 AS PaxOrder
+FROM Trips1
+WHERE Pax1 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax2 AS PaxName, 2 AS PaxOrder
+FROM Trips1
+WHERE Pax2 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax3 AS PaxName, 3 AS PaxOrder
+FROM Trips1
+WHERE Pax3 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax4 AS PaxName, 4 AS PaxOrder
+FROM Trips1
+WHERE Pax4 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax5 AS PaxName, 5 AS PaxOrder
+FROM Trips1
+WHERE Pax5 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax6 AS PaxName, 6 AS PaxOrder
+FROM Trips1
+WHERE Pax6 IS NOT NULL
+UNION 
+SELECT DISTINCT TripID, Pax7 AS PaxName, 7 AS PaxOrder
+FROM Trips1
+WHERE Pax7 IS NOT NULL
+ORDER BY TripID ASC, PaxOrder ASC;
+
+
+--Create the intersection table for Census. Make CensusID an IDENTITY and start with 1000.
+--Include the two FKs for Trip and Pax, PaxOrder, and Name (to match PK/FKs).
+
+SELECT TripID, PaxName, PaxOrder
+INTO TblCensus
+FROM(SELECT DISTINCT TripID, Pax1 AS PaxName, 1 AS PaxOrder
+FROM Trips1
+WHERE Pax1 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax2 AS PaxName, 2 AS PaxOrder
+FROM Trips1
+WHERE Pax2 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax3 AS PaxName, 3 AS PaxOrder
+FROM Trips1
+WHERE Pax3 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax4 AS PaxName, 4 AS PaxOrder
+FROM Trips1
+WHERE Pax4 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax5 AS PaxName, 5 AS PaxOrder
+FROM Trips1
+WHERE Pax5 IS NOT NULL
+UNION
+SELECT DISTINCT TripID, Pax6 AS PaxName, 6 AS PaxOrder
+FROM Trips1
+WHERE Pax6 IS NOT NULL
+UNION 
+SELECT DISTINCT TripID, Pax7 AS PaxName, 7 AS PaxOrder
+FROM Trips1
+WHERE Pax7 IS NOT NULL) AS TripPaxCensus
+ORDER BY TripID ASC, PaxOrder ASC;
+
+ALTER TABLE TblCensus
+ADD CensusID INT IDENTITY (1000,1) PRIMARY KEY;
+
+ALTER TABLE tblCensus
+ADD PaxID INT NULL
+
+ALTER TABLE Trips1
+ADD CensusID INT NULL
+/*
