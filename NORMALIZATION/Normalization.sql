@@ -919,3 +919,55 @@ PaxID Name                        PaxFirstName         PaxLastName
 
 SELECT PaxID, PaxName, PaxFirstName,PaxLastName
 FROM tblPax;
+
+/*
+We cannot link the Pax table to the Trip table yet because there is
+a many-to-many relationship between Pax and Trip.
+We can, however, go ahead and take care of CaptainName since it is a 1:Many relationship.
+*/
+
+--[TripID] --> CaptainName
+--Create a Foreign key (CaptainID) for the Pax table in the Trip table. Specify that the FK can be NULL.
+--We are matching CaptainName with Name in the Trip and Pax tables respectively.
+
+ALTER TABLE Trips1
+ADD CaptainID INT NULL;
+
+--Link the two tables through PK/FK (Name) using an UPDATE statement.
+
+UPDATE Trips1
+SET Trips1.CaptainID = tblPax.PaxID
+FROM Trips1, tblPax
+WHERE Trips1.CaptainName = tblPax.PaxName;
+
+--Confirm update by JOINing Trip and Launch on the new PK/FK relationship. The result should be 170 rows.
+
+SELECT COUNT(*)
+FROM Trips1
+INNER JOIN tblPax  ON Trips1.CaptainName = tblPax.PaxName;
+
+/*
+Create a referential integrity constraint (define the Foreign Key as a constraint).
+ALTER TABLE slTrip DROP CONSTRAINT fk_CaptainID;
+CaptainID maps to slPax(PaxID).
+*/
+ALTER TABLE Trips1
+ADD CONSTRAINT fk_tblPax
+FOREIGN key (CaptainID)
+REFERENCES tblPax(PaxID);
+
+/*
+Test by attempting to delete a captain (in my case, PaxID = 513). The fk constraint should prohibit this
+because it would result in an orphan in the many (child) table.
+
+Msg 547, Level 16, State 0, Line 1
+The DELETE statement conflicted with the REFERENCE
+*/
+
+DELETE FROM tblPax
+WHERE PaxID = 513;
+
+--Drop CaptainName from the Trip table.
+
+ALTER TABLE Trips1
+DROP CONSTRAINT fk_tblPax;
