@@ -1081,3 +1081,57 @@ ADD PaxID INT NULL
 ALTER TABLE Trips1
 ADD CensusID INT NULL
 /*
+/*
+
+Using the query written above, populate the Census table and write a query to show the result.
+
+Should insert 424 rows.
+
+CensusID TripID PaxID PaxOrder Name
+1000     1       NULL 1       Austin Pardue
+1001     1       NULL 2       Giles Pardue
+1002     2       NULL 1       Austin Pardue
+1003     2       NULL 2       Giles Pardue
+1004     3       NULL 1       Aline Pardue
+1005     3       NULL 2       Jessica Futral
+     :
+	 :
+*/
+select CensusID, TripID, PaxID, PaxOrder, PaxName
+from TblCensus
+
+/*
+Update the FK for PaxID in the Census table (replace the NULL values).
+
+Should look like this:
+
+CensusID TripID PaxID PaxOrder Name
+1000     1      513   1       Austin Pardue
+1001     1      540   2       Giles Pardue
+1002     2      513   1       Austin Pardue
+1003     2      540   2       Giles Pardue
+1004     3      503   1       Aline Pardue
+1005     3      552   2       Jessica Futral
+     :
+	 :
+*/
+--Confirm update by JOINing Trip, Census and Pax tables.The result should be 424 rows.
+
+UPDATE Trips1
+SET Trips1.CensusID = tblCensus.CensusID
+FROM tblCensus, Trips1
+WHERE Trips1.CaptainName = tblCensus.PaxName 
+
+UPDATE tblCensus
+SET tblCensus.PaxID = tblPax.PaxID
+FROM tblCensus,tblPax
+WHERE tblCensus.PaxName = tblPax.PaxName
+
+SELECT COUNT(*)
+FROM tblCensus 
+     INNER JOIN 
+	 tblPax ON tblCensus.PaxID = tblPax.PaxID     
+     INNER JOIN 
+	 Trips1 ON tblCensus.TripID = Trips1.TripID
+
+--Create a referential integrity constraint for both FKs in the Census table.
