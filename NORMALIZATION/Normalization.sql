@@ -1135,3 +1135,37 @@ FROM tblCensus
 	 Trips1 ON tblCensus.TripID = Trips1.TripID
 
 --Create a referential integrity constraint for both FKs in the Census table.
+
+ALTER TABLE tblCensus
+ADD CONSTRAINT fk_tblPaxCensus
+FOREIGN key (PaxID)
+REFERENCES tblPax(PaxID);
+
+--ALTER TABLE slCensus DROP CONSTRAINT fk_CensusPaxID;
+
+ALTER TABLE tblCensus
+DROP CONSTRAINT fk_tblPaxCensus;
+
+--Test by attempting to delete an appropriate Trip or Pax.
+
+DELETE FROM tblCensus
+WHERE PaxID = 546;
+
+--Now to clean up and drop columns.
+
+SELECT * FROM Trips1;
+
+ALTER TABLE Trips1
+DROP COLUMN Pax1, Pax2, Pax3, Pax4, Pax5, Pax6, Pax7, CaptainName;
+
+--Drop Name from the Pax table.
+
+ALTER TABLE tblPax
+DROP COLUMN PaxName;
+
+--Drop Name from the Census table.
+
+ALTER TABLE tblCensus
+DROP COLUMN PaxName
+
+--Drop the repeating attributes Pax1... from the Trip table.
