@@ -1169,3 +1169,15 @@ ALTER TABLE tblCensus
 DROP COLUMN PaxName
 
 --Drop the repeating attributes Pax1... from the Trip table.
+
+
+/*********************************************************************
+6. JOIN new tables. Should return 424 rows.
+*********************************************************************/
+
+SELECT COUNT(*)
+FROM tblCensus 
+     INNER JOIN 
+	 tblPax ON tblCensus.PaxID = tblPax.PaxID     
+     INNER JOIN 
+	 Trips1 ON tblCensus.TripID = Trips1.TripID
