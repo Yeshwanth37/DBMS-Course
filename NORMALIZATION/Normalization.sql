@@ -793,7 +793,7 @@ FROM (SELECT DISTINCT Pax1 AS PaxName
       WHERE Pax7 IS NOT NULL) AS vwName
 ORDER BY PaxName ASC;
 
-*
+/*
 Ok. Here is the tricky part, extracting first and last name. String functions in SQL are a little weak.
 Probably we should write a script to do this pre-processing.
 We are going to make the simplifying assumption that the last set of contiguous characters is
